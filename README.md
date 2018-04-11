@@ -5,4 +5,4 @@
 This is a collection of scripts to perform pre and post processing of data for convergence detection tools.
 
 Notable scripts include:
- - [annotate_diffsel.py](script/annotate_diffsel.py), a tool to annotate phylogenetic trees with conditions (typically, convergent or non-convergent). It uses the graphical interface of ete3 to help annotate the trees. Currently, the output format is that of [diffsel](https://github.com/vlanore/diffsel) (i.e., it encode conditions as branch length).
+ - [annotate_diffsel.py](script/annotate_diffsel.py), a tool to annotate phylogenetic trees with conditions (typically, convergent or non-convergent). It uses the graphical interface of ete3 to help annotate the trees. Currently, the output format is that of [diffsel](https://github.com/vlanore/diffsel) (i.e., it encodes conditions as branch lengths).

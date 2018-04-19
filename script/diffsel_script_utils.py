@@ -1,12 +1,12 @@
-# Copyright or Copr. Centre National de la Recherche Scientifique (CNRS) (2017/11/27)
+# Copyright or Copr. Centre National de la Recherche Scientifique (CNRS) (2018)
 # Contributors:
 # - Vincent Lanore <vincent.lanore@gmail.com>
 
-# This software is a computer program whose purpose is to provide small tools and scripts related to phylogeny and bayesian
-# inference.
+# This software is a computer program whose purpose is to provide a set of scripts for pre and post processing of data for
+# convergence detection programs.
 
-# This software is governed by the CeCILL-B license under French law and abiding by the rules of distribution of free software.
-# You can use, modify and/ or redistribute the software under the terms of the CeCILL-B license as circulated by CEA, CNRS and
+# This software is governed by the CeCILL-C license under French law and abiding by the rules of distribution of free software.
+# You can use, modify and/ or redistribute the software under the terms of the CeCILL-C license as circulated by CEA, CNRS and
 # INRIA at the following URL "http://www.cecill.info".
 
 # As a counterpart to the access to the source code and rights to copy, modify and redistribute granted by the license, users
@@ -20,18 +20,11 @@
 # in conditions enabling the security of their systems and/or data to be ensured and, more generally, to use and operate it in
 # the same conditions as regards security.
 
-# The fact that you are presently reading this means that you have had knowledge of the CeCILL-B license and that you accept
+# The fact that you are presently reading this means that you have had knowledge of the CeCILL-C license and that you accept
 # its terms.
 
 import sys
 import random
-
-# String handling functions
-def strip(str):
-    if str[0]=='#':
-        return str[1:]
-    else:
-        return str.strip()
 
 # Color-related functions
 if sys.stdout.isatty():
@@ -99,22 +92,3 @@ def failure(string):
 
 def ask_input(string):
     return "-- ["+boldcyan("INPUT")+"] "+str(string)
-
-# Codon functions
-bases = ["A", "C", "G", "T"]
-
-def rand_codon():
-    return random.choice(bases)+random.choice(bases)+random.choice(bases)
-
-def selected_codon():
-    aa1 = ["AAT", "AAC"]
-    return random.choice(aa1)
-
-def mutate(codon, proba=100):
-    if random.randint(1,100) <= proba:
-        result = list(codon)
-        result[random.randint(0,2)] = random.choice(bases)
-        print("Decided to mutate codon "+codon+" to "+"".join(result)+" with probability "+str(proba))
-        return "".join(result)
-    else:
-        return codon

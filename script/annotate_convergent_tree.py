@@ -142,56 +142,57 @@ def draw_tree(t):
         n.add_face(nd, column=0, position="float")
         n.add_face(TextFace("       "), column=0, position="branch-bottom")
 
+def set_tag(node, tag, value):
+    if hasattr(n_i,"Transition"):
+        setattr(node, tag, value)
+    else:
+        node.add_feature(tag, value)
+
+def mark_subtree(node, condition):
+    print("  * adding tag " + data("Condition="+str(condition)) + " to the subtree rooted at node " + data(node.i))
+    node.Condition = condition
+    for child in node.get_descendants():
+        child.Condition = condition
+
+    if add_transition:
+        print("  * adding tag " + data("Transition="+str(condition)) + " at node " + data(node.i))
+        set_tag(node, "Transition", condition)
+
 draw_tree(t)
 
 print("-- Starting subtree selection")
 continue_flag = True
 t_new = t.copy()
 while continue_flag:
+    # asking user input
     if not pdf_window:
         print("-- Choose your node and close the window")
         t_new.show(tree_style=tree_style)
     else:
         print("-- Please look at "+data(pdf_file)+" to see node numbers")
         t_new.render(pdf_file, tree_style=tree_style)
-    testVar = input(ask_input("Please enter start of convergent subtree (type "+green("s")+" to save and quit):"))
-    if testVar.isdigit():
-        t_new = t_new.copy("newick-extended")
+    user_input = input(ask_input("Please enter start of convergent subtree (type "+green("s")+" to save and quit):"))
+
+    #processing input
+    if user_input.isdigit(): #if input is an int
+        t_new = t_new.copy("newick-extended") # make a copy of the tree (VL: why?)
         t_new.add_feature("i", t.i)
         t_new.add_feature("Condition", t.Condition)
-        nb = int(testVar)
-        print("  * adding tag " + data("Condition=1") + " to the subtree rooted at node " + data(nb))
-        n_i = t_new.search_nodes(i=str(nb))
-        if n_i:
-            n_i = n_i[0]
-            n_i.Condition = 1
-            if add_transition:
-                if hasattr(n_i,"Transition"):
-                    n_i.Transition = 1
-                else:
-                    n_i.add_feature("Transition",1)
-                print("  * adding tag " + data("Transition=1") + " at node " + data(nb))
-            for n_d in n_i.get_descendants():
-                n_d.Condition = 1
+        nb = int(user_input)
+        n_i = t_new.search_nodes(i=str(nb)) # locating subtree whose root is at nb
+        if n_i: # if found
+            n_i = n_i[0] # we expect only one result as indices are supposed to be unique
+
+            mark_subtree(n_i, 1)
+
+            # if sister is specified, handle sister trees
             if sister:
                 n_s = n_i.get_sisters()
                 for n_s_i in n_s:
-                    print("  * adding tag " + data("Condition=2") + " to the subtree rooted at node " + data(n_s_i.i))
-                    n_s_i.Condition = 2
-                    if add_transition:
-                        if hasattr(n_i,"Transition"):
-                            n_i.Transition = 2
-                        else:
-                            n_i.add_feature("Transition",2)
-                        print("  * adding tag " + data("Transition=2") + " at node " + data(n_s_i.i))
-                    if add_transition:
-                        n_s_i.Transition = 2
-                    for n in n_s_i.get_descendants():
-                        n.Condition = 2
-        else:
-            print(failure("Input node was not in the tree; try again"))
+                    mark_subtree(n_s_i, 2)
+
         draw_tree(t_new)
-    elif testVar == "s":
+    elif user_input == "s":
         continue_flag = False
     else:
         print(failure("Input was not an integer; try again"))

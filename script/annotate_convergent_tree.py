@@ -26,12 +26,7 @@
 
 
 from ete3 import Tree, NodeStyle, TreeStyle, TextFace
-
 from diffsel_script_utils import *
-
-## Trick to use input in python 2 et 3.*
-try: input = raw_input
-except NameError: pass
 
 #===================================================================================================
 print(step("Parsing command line arguments"))
@@ -50,15 +45,15 @@ print("-- Sequence file is "+param(tree_file.name))
 sister = args.sister
 print("-- Sister branch condition: "+param(sister))
 add_transition = args.add_transition
-print("-- add transtion condition: "+param(add_transition))
+print("-- Add transtion condition: "+param(add_transition))
 pdf_window = args.pdf_window
 if not pdf_window:
     print("-- Use a pop-up widow instead of a pdf file")
 else:
     pdf_file = tree_file.name+".pdf"
-    print("-- Use a pdf file instead of a pop-up widow  ("+param(pdf_file)+")")
+    print("-- Use a pdf file instead of a pop-up widow  ("+data(pdf_file)+")")
 out_file = tree_file.name+".annotated"
-print("-- Output file is "+param(out_file))
+print("-- Output file is "+data(out_file))
 
 #===================================================================================================
 print(step("Setting tree and node styles"))
@@ -202,7 +197,7 @@ while continue_flag:
 #===================================================================================================
 print(step("Writing result to file: "))
 
-print("-- Output file is: " + data(out_file))
+print("-- Output file is " + data(out_file))
 features = ["Condition"]
 if add_transition:
     features.append("Transition")

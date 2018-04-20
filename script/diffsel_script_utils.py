@@ -26,6 +26,10 @@
 import sys
 import random
 
+## Trick to use input in python 2 et 3.*
+try: input = raw_input
+except NameError: pass
+
 # Color-related functions
 if sys.stdout.isatty():
     class bcolors:

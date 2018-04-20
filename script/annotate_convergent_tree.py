@@ -64,6 +64,7 @@ print("-- Reading tree from file")
 t = Tree(tree_file.name)
 
 print("-- Setting all node  to Condition = "+data(0))
+print("-- Numbering nodes")
 i=0
 for n in t.traverse("postorder"):
     n.add_feature("Condition",0)
@@ -100,23 +101,26 @@ for condi_i in sorted(condi_color_dic.keys()):
     tf.border.width = 1
     tree_style.legend.add_face(tf, column=1)
 
-print("-- Numbering nodes")
-i=0
-for n in t.traverse():
-    if n.is_leaf():
-            n.set_style(nstyle_L)
-            n.add_face(TextFace(str(n.name)), column=0, position="aligned")
-    else:
-        n.set_style(nstyle)
-    nd = TextFace(str(n.i))
-    nd.background.color = "white"
-    nd.margin_right = 2
-    nd.margin_top = 1
-    nd.margin_left = 2
-    nd.margin_bottom = 1
-    nd.border.width = 1
-#    n.add_face(nd, column=0, position="float")
-#    n.add_face(TextFace("       "), column=0, position="branch-bottom")
+
+
+def draw_tree(t):
+    for n in t.traverse():
+        if n.is_leaf():
+                n.set_style(nstyle_L)
+                n.add_face(TextFace(str(n.name)), column=0, position="aligned")
+        else:
+            n.set_style(nstyle)
+        nd = TextFace(str(n.i))
+        nd.background.color = condi_color_dic[str(n.Condition)]
+        nd.margin_right = 2
+        nd.margin_top = 1
+        nd.margin_left = 2
+        nd.margin_bottom = 1
+        nd.border.width = 1
+        n.add_face(nd, column=0, position="float")
+        n.add_face(TextFace("       "), column=0, position="branch-bottom")
+
+draw_tree(t)
 
 print("-- Starting subtree selection")
 continue_flag = True
@@ -149,21 +153,7 @@ while continue_flag:
                         n.Condition = 2
         else:
             print(failure("Input node was not in the tree; try again"))
-        for n in t_new.traverse():
-            if n.is_leaf():
-                    n.set_style(nstyle_L)
-                    n.add_face(TextFace(str(n.name)), column=0, position="aligned")
-            else:
-                n.set_style(nstyle)
-            nd = TextFace(str(n.i))
-            nd.background.color =  condi_color_dic[str(n.Condition)]
-            nd.margin_right = 2
-            nd.margin_top = 1
-            nd.margin_left = 2
-            nd.margin_bottom = 1
-            nd.border.width = 1
-            n.add_face(nd, column=0, position="float")
-            n.add_face(TextFace("       "), column=0, position="branch-bottom")
+        draw_tree(t_new)
     elif testVar == "s":
         continue_flag = False
     else:

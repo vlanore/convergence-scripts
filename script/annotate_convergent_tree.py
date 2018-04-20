@@ -61,10 +61,11 @@ out_file = tree_file.name+".annotated"
 print("-- Output file is "+param(out_file))
 
 #===================================================================================================
-# STYLE
+print(step("Setting tree and node styles"))
 
 condi_color_dic = {"0":"#E6E6FA", "1":"#ADD8E6", "2":"#90EE90"}
 
+print("-- Setting node styles")
 nstyle = NodeStyle()
 nstyle["fgcolor"] = "black"
 nstyle["size"] = 1
@@ -73,6 +74,7 @@ nstyle_L = NodeStyle() # VL: isn't it identical to nstyle?
 nstyle_L["fgcolor"] = "black"
 nstyle_L["size"] = 1
 
+print("-- Setting tree style")
 tree_style = TreeStyle()
 tree_style.show_leaf_name = False
 tree_style.show_branch_length = False
@@ -80,7 +82,7 @@ tree_style.draw_guiding_lines = True
 tree_style.complete_branch_lines_when_necessary = True
 tree_style.legend_position = 1
 
-# legend with list of conditions
+print("-- Setting legend with condition numbers and colors")
 for condi_i in sorted(condi_color_dic.keys()):
     tf = TextFace("Condition      " + condi_i)
     tf.background.color = condi_color_dic[condi_i]

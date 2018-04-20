@@ -80,7 +80,7 @@ nstyle = NodeStyle()
 nstyle["fgcolor"] = "black"
 nstyle["size"] = 1
 
-nstyle_L = NodeStyle()
+nstyle_L = NodeStyle() # VL: isn't it identical to nstyle?
 nstyle_L["fgcolor"] = "black"
 nstyle_L["size"] = 1
 
@@ -89,8 +89,9 @@ tree_style.show_leaf_name = False
 tree_style.show_branch_length = False
 tree_style.draw_guiding_lines = True
 tree_style.complete_branch_lines_when_necessary = True
-
 tree_style.legend_position = 1
+
+
 for condi_i in sorted(condi_color_dic.keys()):
     tf = TextFace("Condition " + condi_i)
     tf.background.color = condi_color_dic[condi_i]
@@ -100,7 +101,6 @@ for condi_i in sorted(condi_color_dic.keys()):
     tf.margin_bottom = 1
     tf.border.width = 1
     tree_style.legend.add_face(tf, column=1)
-
 
 
 def draw_tree(t):
@@ -122,6 +122,7 @@ def draw_tree(t):
 
 draw_tree(t)
 
+
 print("-- Starting subtree selection")
 continue_flag = True
 t_new = t.copy()
@@ -139,6 +140,7 @@ while continue_flag:
         t_new.add_feature("i", t.i)
         t_new.add_feature("Condition", t.Condition)
         nb = int(testVar)
+        print("-- Selected subtree rooted at node "+data(nb))
         n_i = t_new.search_nodes(i=str(nb))
         if n_i:
             n_i = n_i[0]

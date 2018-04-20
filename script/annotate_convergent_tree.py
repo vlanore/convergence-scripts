@@ -95,7 +95,7 @@ print(step("Tree retrieval and preparation"))
 print("-- Reading tree from file")
 t = Tree(tree_file.name)
 
-print("-- Setting all node  to Condition = "+data(0))
+print("-- Setting all nodes to Condition = "+data(0))
 i=0
 for n in t.traverse("postorder"):
     n.add_feature("Condition",0)
@@ -144,7 +144,7 @@ def mark_subtree(node, condition):
         child.Condition = condition
 
     if add_transition:
-        print("  * adding tag " + data(condition) + " at node " + data(node.i))
+        print("  * adding tag Transition = " + data(condition) + " at node " + data(node.i))
         set_tag(node, "Transition", condition)
 
 draw_tree(t)

@@ -61,21 +61,7 @@ out_file = tree_file.name+".annotated"
 print("-- Output file is "+param(out_file))
 
 #===================================================================================================
-print(step("Tree retrieval and preparation"))
-
-print("-- Reading tree from file")
-t = Tree(tree_file.name)
-
-print("-- Setting all node  to Condition = "+data(0))
-print("-- Numbering nodes")
-i=0
-for n in t.traverse("postorder"):
-    n.add_feature("Condition",0)
-    n.add_feature("i",str(i))
-    i+=1
-
-#===================================================================================================
-print(step("Convergent branch selection"))
+# STYLE
 
 condi_color_dic = {"0":"#E6E6FA", "1":"#ADD8E6", "2":"#90EE90"}
 
@@ -94,7 +80,7 @@ tree_style.draw_guiding_lines = True
 tree_style.complete_branch_lines_when_necessary = True
 tree_style.legend_position = 1
 
-
+# legend with list of conditions
 for condi_i in sorted(condi_color_dic.keys()):
     tf = TextFace("Condition      " + condi_i)
     tf.background.color = condi_color_dic[condi_i]
@@ -115,6 +101,22 @@ if add_transition:
      tf.border.color = "red"
      tf.border.width = 2
      tree_style.legend.add_face(tf, column=1)
+
+#===================================================================================================
+print(step("Tree retrieval and preparation"))
+
+print("-- Reading tree from file")
+t = Tree(tree_file.name)
+
+print("-- Setting all node  to Condition = "+data(0))
+i=0
+for n in t.traverse("postorder"):
+    n.add_feature("Condition",0)
+    n.add_feature("i",str(i))
+    i+=1
+
+#===================================================================================================
+print(step("Convergent branch selection"))
 
 def draw_tree(t):
     for n in t.traverse():
@@ -138,7 +140,6 @@ def draw_tree(t):
         n.add_face(TextFace("       "), column=0, position="branch-bottom")
 
 draw_tree(t)
-
 
 print("-- Starting subtree selection")
 continue_flag = True

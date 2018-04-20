@@ -94,6 +94,9 @@ def success(string):
 def failure(string):
     return "-- ["+boldred("FAILURE")+"] "+string
 
+def warning_str(string):
+    return "-- ["+boldred("WARNING")+"] "+string
+
 def ask_input(string):
     return "-- ["+boldcyan("INPUT")+"] "+str(string)
 

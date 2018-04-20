@@ -94,15 +94,16 @@ for condi_i in sorted(condi_color_dic.keys()):
     tree_style.legend.add_face(tf, column=1)
 
 if add_transition:
-     tf = TextFace("Transition -> x")
-     tf.background.color = "white"
-     tf.margin_right = 2
-     tf.margin_top = 1
-     tf.margin_left = 2
-     tf.margin_bottom = 1
-     tf.border.color = "red"
-     tf.border.width = 2
-     tree_style.legend.add_face(tf, column=1)
+    print("-- Setting transition style")
+    tf = TextFace("Transition -> x")
+    tf.background.color = "white"
+    tf.margin_right = 2
+    tf.margin_top = 1
+    tf.margin_left = 2
+    tf.margin_bottom = 1
+    tf.border.color = "red"
+    tf.border.width = 2
+    tree_style.legend.add_face(tf, column=1)
 
 #===================================================================================================
 print(step("Tree retrieval and preparation"))

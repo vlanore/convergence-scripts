@@ -152,17 +152,15 @@ while continue_flag:
         print("-- Choose your node and close the window")
         t_new.show(tree_style=tree_style)
     else:
-        print("-- Choose your node in "+data(pdf_file))
+        print("-- Please look at "+data(pdf_file)+" to see node numbers")
         t_new.render(pdf_file, tree_style=tree_style)
-    print("(to save and quit type "+param("s")+")")
-    testVar = input(ask_input("Please enter start of convergent subtree: "))
+    testVar = input(ask_input("Please enter start of convergent subtree (type "+green("s")+" to save and quit):"))
     if testVar.isdigit():
         t_new = t_new.copy("newick-extended")
         t_new.add_feature("i", t.i)
         t_new.add_feature("Condition", t.Condition)
         nb = int(testVar)
-        print("-- Selected subtree rooted at node "+data(nb))
-        print("  -- add tag Condition="+data(1)+" to the subtree of node " +data(nb))
+        print("  * adding tag " + data("Condition=1") + " to the subtree rooted at node " + data(nb))
         n_i = t_new.search_nodes(i=str(nb))
         if n_i:
             n_i = n_i[0]
@@ -172,7 +170,7 @@ while continue_flag:
                     n_i.Transition = 1
                 else:
                     n_i.add_feature("Transition",1)
-                print("  -- add tag Transition="+data(1)+" at node "+data(nb))
+                print("  * adding tag " + data("Transition=1") + " at node " + data(nb))
             for n_d in n_i.get_descendants():
                 n_d.Condition = 1
             if sister:
@@ -184,7 +182,7 @@ while continue_flag:
                             n_i.Transition = 2
                         else:
                             n_i.add_feature("Transition",2)
-                        print("  -- add tag Transition="+data(1)+" at node "+data(nb))
+                        print("  * adding tag " + data("Transition=2")+" at node " + data(nb))
                     if add_transition:
                         n_s_i.Transition = 2
                     for n in n_s_i.get_descendants():

@@ -128,7 +128,7 @@ while continue_flag:
         print("-- Choose your node in "+data(pdf_file))
         t_new.render(pdf_file, tree_style=tree_style)
     print("(to save and quit type "+param("s")+")")
-    testVar = raw_input(ask_input("Please enter start of convergent subtree: "))
+    testVar = input(ask_input("Please enter start of convergent subtree: "))
     if testVar.isdigit():
         t_new = t.copy("newick-extended")
         t_new.add_feature("i", t.i)

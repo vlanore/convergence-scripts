@@ -29,6 +29,10 @@ from ete3 import Tree, NodeStyle, TreeStyle, TextFace
 
 from diffsel_script_utils import *
 
+## Trick to use input in python 2 et 3.*
+try: input = raw_input
+except NameError: pass
+
 #===================================================================================================
 print(step("Parsing command line arguments"))
 

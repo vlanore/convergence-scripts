@@ -109,3 +109,5 @@ def MESSAGE(string):
 def SUBMESSAGE(string):
     print("  * "+string)
 
+def WARNING(string):
+    print(warning_str(string))

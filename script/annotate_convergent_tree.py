@@ -105,10 +105,11 @@ features = list(set(features))
 if not features:
     SUBMESSAGE("No detected tag")
 else:
-    SUBMESSAGE("Detected tags: "+",".join(features))
+    SUBMESSAGE("Detected tags: "+", ".join([data(f) for f in features]))
 
 if "i" in features:
-    print(warning_str("\"i\" is in the detected tag but it will be remove by the programm"))
+    WARNING("\"i\" is in the detected tags but it will be removed by the programm")
+    features.remove("i")
 
 if not "Condition" in features:
     MESSAGE("Setting all nodes to Condition = "+data(0))
@@ -130,12 +131,12 @@ def set_if_no_tag(node, tag, value):
         node.add_feature(tag, value)
 
 for n in t.traverse("postorder"):
-    set_if_no_tag(n,"Condition",0)
+    set_if_no_tag(n, "Condition", 0)
 
 MESSAGE("Numberings nodes")
 i = 0
 for n in t.traverse("postorder"):
-    set_tag(n,"i",str(i))
+    set_tag(n, "i", str(i))
     i+=1
 
 #===================================================================================================

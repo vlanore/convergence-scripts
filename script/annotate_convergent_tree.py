@@ -41,6 +41,7 @@ parser = ArgumentParser(description='Annotates a phylogenetic trees with conditi
 parser.add_argument('inputFile', metavar="input", type=FileType('r'), nargs=1, help='the tree file (newick format)')
 parser.add_argument('-s', '--sister-branch-cond', dest="sister", action='store_true', help="toggle the use of a different condition for the sister branches of convergent branches")
 parser.add_argument('--pdf', dest="pdf_window", action='store_true', help="use a pdf file instead of a interactive window.")
+parser.add_argument('--transition', dest="add_transition", action='store_true', help="add the tag Transition where you put a convergent event.")
 
 args = parser.parse_args()
 
@@ -48,6 +49,8 @@ tree_file = args.inputFile[0]
 print("-- Sequence file is "+param(tree_file.name))
 sister = args.sister
 print("-- Sister branch condition: "+param(sister))
+add_transition = args.add_transition
+print("-- add transtion condition: "+param(add_transition))
 pdf_window = args.pdf_window
 if not pdf_window:
     print("-- Use a pop-up widow instead of a pdf file")
@@ -93,7 +96,7 @@ tree_style.legend_position = 1
 
 
 for condi_i in sorted(condi_color_dic.keys()):
-    tf = TextFace("Condition " + condi_i)
+    tf = TextFace("Condition      " + condi_i)
     tf.background.color = condi_color_dic[condi_i]
     tf.margin_right = 2
     tf.margin_top = 1
@@ -102,6 +105,16 @@ for condi_i in sorted(condi_color_dic.keys()):
     tf.border.width = 1
     tree_style.legend.add_face(tf, column=1)
 
+if add_transition:
+     tf = TextFace("Transition -> x")
+     tf.background.color = "white"
+     tf.margin_right = 2
+     tf.margin_top = 1
+     tf.margin_left = 2
+     tf.margin_bottom = 1
+     tf.border.color = "red"
+     tf.border.width = 2
+     tree_style.legend.add_face(tf, column=1)
 
 def draw_tree(t):
     for n in t.traverse():
@@ -117,6 +130,10 @@ def draw_tree(t):
         nd.margin_left = 2
         nd.margin_bottom = 1
         nd.border.width = 1
+        if add_transition:
+            if hasattr(n,"Transition"):
+                nd.border.color = "red"
+                nd.border.width = 2
         n.add_face(nd, column=0, position="float")
         n.add_face(TextFace("       "), column=0, position="branch-bottom")
 
@@ -141,16 +158,31 @@ while continue_flag:
         t_new.add_feature("Condition", t.Condition)
         nb = int(testVar)
         print("-- Selected subtree rooted at node "+data(nb))
+        print("  -- add tag Condition="+data(1)+" to the subtree of node " +data(nb))
         n_i = t_new.search_nodes(i=str(nb))
         if n_i:
             n_i = n_i[0]
             n_i.Condition = 1
+            if add_transition:
+                if hasattr(n_i,"Transition"):
+                    n_i.Transition = 1
+                else:
+                    n_i.add_feature("Transition",1)
+                print("  -- add tag Transition="+data(1)+" at node "+data(nb))
             for n_d in n_i.get_descendants():
                 n_d.Condition = 1
             if sister:
                 n_s = n_i.get_sisters()
                 for n_s_i in n_s:
                     n_s_i.Condition = 2
+                    if add_transition:
+                        if hasattr(n_i,"Transition"):
+                            n_i.Transition = 2
+                        else:
+                            n_i.add_feature("Transition",2)
+                        print("  -- add tag Transition="+data(1)+" at node "+data(nb))
+                    if add_transition:
+                        n_s_i.Transition = 2
                     for n in n_s_i.get_descendants():
                         n.Condition = 2
         else:
@@ -164,4 +196,7 @@ while continue_flag:
 #===================================================================================================
 print(step("Writing result to file: "))
 print("-- in: " + data(out_file))
-t_new.write(format=1,features=["Condition"], outfile = out_file)
+features = ["Condition"]
+if add_transition:
+    features.append("Transition")
+t_new.write(format=1,features=features, outfile = out_file)

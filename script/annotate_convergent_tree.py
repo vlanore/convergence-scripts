@@ -135,7 +135,7 @@ while continue_flag:
     print("(to save and quit type "+param("s")+")")
     testVar = input(ask_input("Please enter start of convergent subtree: "))
     if testVar.isdigit():
-        t_new = t.copy("newick-extended")
+        t_new = t_new.copy("newick-extended")
         t_new.add_feature("i", t.i)
         t_new.add_feature("Condition", t.Condition)
         nb = int(testVar)
@@ -162,4 +162,4 @@ while continue_flag:
 #===================================================================================================
 print(step("Writing result to file: "))
 print("-- in: " + data(out_file))
-t.write(format=1,features=["Condition"], outfile = out_file)
+t_new.write(format=1,features=["Condition"], outfile = out_file)

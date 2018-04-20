@@ -95,11 +95,7 @@ STEP("Tree retrieval and preparation")
 MESSAGE("Reading tree from file")
 t = Tree(tree_file.name)
 
-<<<<<<< HEAD
-print("-- Setting all nodes to Condition = "+data(0))
-=======
-MESSAGE("Setting all node  to Condition = "+data(0))
->>>>>>> More refactoring, including higher-level message functions in utils file :)
+MESSAGE("Setting all nodes to Condition = "+data(0))
 i=0
 for n in t.traverse("postorder"):
     n.add_feature("Condition",0)

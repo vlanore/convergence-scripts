@@ -96,3 +96,13 @@ def failure(string):
 
 def ask_input(string):
     return "-- ["+boldcyan("INPUT")+"] "+str(string)
+
+def STEP(string):
+    print(step(string))
+
+def MESSAGE(string):
+    print("-- "+string)
+
+def SUBMESSAGE(string):
+    print("  * "+string)
+

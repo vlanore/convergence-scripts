@@ -29,7 +29,7 @@ from ete3 import Tree, NodeStyle, TreeStyle, TextFace
 from diffsel_script_utils import *
 
 #===================================================================================================
-print(step("Parsing command line arguments"))
+STEP("Parsing command line arguments")
 
 from argparse import ArgumentParser, FileType
 parser = ArgumentParser(description='Annotates a phylogenetic trees with condition numbers. Output file uses the NHX format with the "Condition" tag.')
@@ -40,25 +40,25 @@ parser.add_argument('-t', '--transition', dest="add_transition", action='store_t
 args = parser.parse_args()
 
 tree_file = args.inputFile[0]
-print("-- Sequence file is "+param(tree_file.name))
+MESSAGE("Sequence file is "+param(tree_file.name))
 sister = args.sister
-print("-- Sister branch condition: "+param(sister))
+MESSAGE("Sister branch condition: "+param(sister))
 add_transition = args.add_transition
-print("-- Add transtion condition: "+param(add_transition))
+MESSAGE("Add transtion condition: "+param(add_transition))
 out_file = tree_file.name+".annotated"
-print("-- Output file is "+data(out_file))
+MESSAGE("Output file is "+data(out_file))
 
 #===================================================================================================
-print(step("Setting tree and node styles"))
+STEP("Setting tree and node styles")
 
 condi_color_dic = {"0":"#E6E6FA", "1":"#ADD8E6", "2":"#90EE90"}
 
-print("-- Setting node style")
+MESSAGE("Setting node style")
 nstyle = NodeStyle()
 nstyle["fgcolor"] = "black"
 nstyle["size"] = 1
 
-print("-- Setting tree style")
+MESSAGE("Setting tree style")
 tree_style = TreeStyle()
 tree_style.show_leaf_name = False
 tree_style.show_branch_length = False
@@ -66,7 +66,7 @@ tree_style.draw_guiding_lines = True
 tree_style.complete_branch_lines_when_necessary = True
 tree_style.legend_position = 1
 
-print("-- Setting legend with condition numbers and colors")
+MESSAGE("Setting legend with condition numbers and colors")
 for condi_i in sorted(condi_color_dic.keys()):
     tf = TextFace("Condition      " + condi_i)
     tf.background.color = condi_color_dic[condi_i]
@@ -78,7 +78,7 @@ for condi_i in sorted(condi_color_dic.keys()):
     tree_style.legend.add_face(tf, column=1)
 
 if add_transition:
-    print("-- Setting transition style")
+    MESSAGE("Setting transition style")
     tf = TextFace("Transition -> x")
     tf.background.color = "white"
     tf.margin_right = 2
@@ -90,9 +90,9 @@ if add_transition:
     tree_style.legend.add_face(tf, column=1)
 
 #===================================================================================================
-print(step("Tree retrieval and preparation"))
+STEP("Tree retrieval and preparation")
 
-print("-- Reading tree from file")
+MESSAGE("Reading tree from file")
 t = Tree(tree_file.name)
 
 print("-- Detect existing tags")
@@ -123,13 +123,14 @@ for n in t.traverse("postorder"):
 
 
 print("-- Numberings nodes")
+
 i=0
 for n in t.traverse("postorder"):
     n.add_feature("i",str(i))
     i+=1
 
 #===================================================================================================
-print(step("Convergent branch selection"))
+STEP("Convergent branch selection")
 
 def draw_tree(tree):
     tree_copy = tree.copy("newick-extended")
@@ -164,23 +165,22 @@ def set_tag(node, tag, value):
         node.add_feature(tag, value)
 
 def mark_subtree(node, condition):
-    print("  * adding tag Condition = " + data(condition) + " to the subtree rooted at node " + data(node.i))
+    SUBMESSAGE("adding tag Condition = " + data(condition) + " to the subtree rooted at node " + data(node.i))
     node.Condition = condition
     for child in node.get_descendants():
         child.Condition = condition
 
     if add_transition:
-        print("  * adding tag Transition = " + data(condition) + " at node " + data(node.i))
+        SUBMESSAGE("adding tag Transition = " + data(condition) + " at node " + data(node.i))
         set_tag(node, "Transition", condition)
 
 draw_tree(t)
 
-print("-- Starting subtree selection")
+MESSAGE("Starting subtree selection")
 pdf_file = tree_file.name+".pdf"
-continue_flag = True
-while continue_flag:
+while True:
     # asking user input
-    print("-- Please look at "+data(pdf_file)+" to see node numbers")
+    MESSAGE("Please look at "+data(pdf_file)+" to see node numbers")
     draw_tree(t).render(pdf_file, tree_style=tree_style)
 
     user_input = input(ask_input("Please enter start of convergent subtree (type "+green("s")+" to save and quit):"))
@@ -201,14 +201,15 @@ while continue_flag:
         draw_tree(t)
 
     elif user_input == "s":
-        continue_flag = False
+        break
     else:
         print(failure("Input was not an integer; try again"))
 
 #===================================================================================================
-print(step("Writing result to file: "))
+STEP("Writing result to file: ")
 
 print("-- Output file is " + data(out_file))
+
 if add_transition:
     features.append("Transition")
 t.write(format=1, features=features, outfile = out_file)

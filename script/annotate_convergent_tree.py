@@ -104,6 +104,7 @@ features = list(set(features))
 
 if not features:
     SUBMESSAGE("No detected tag")
+<<<<<<< HEAD
 else:
     SUBMESSAGE("Detected tags: "+",".join(features))
 
@@ -124,20 +125,41 @@ def set_tag(node, tag, value):
         setattr(node, tag, value)
     else:
         node.add_feature(tag, value)
+=======
+    MESSAGE("Setting all nodes to Condition = " + data(0))
+    features = ["Condition"] # so it's written to file
+else:
+    SUBMESSAGE("detected tags: " + ",".join([data(f) for f in features]))
+    if not "Condition" in features:
+        MESSAGE("Setting all nodes to Condition = " + data(0))
+        features.append("Condition")
+    else:
+        MESSAGE("Setting all nodes without tag Condition to " + data(0))
+>>>>>>> f1040fc14da3bb091d2582f5383a4670344f5e33
 
 def set_if_no_tag(node, tag, value):
     if not hasattr(node, tag):
         node.add_feature(tag, value)
 
 for n in t.traverse("postorder"):
+<<<<<<< HEAD
     set_if_no_tag(n,"Condition",0)
 
 MESSAGE("Numberings nodes")
+=======
+    set_if_no_tag(n, "Condition", 0)
+>>>>>>> f1040fc14da3bb091d2582f5383a4670344f5e33
 
-i=0
+MESSAGE("Numberings nodes")
+i = 0
 for n in t.traverse("postorder"):
+<<<<<<< HEAD
     set_tag(n,"i",str(i))
     i+=1
+=======
+    n.add_feature("i",str(i))
+    i += 1
+>>>>>>> f1040fc14da3bb091d2582f5383a4670344f5e33
 
 #===================================================================================================
 STEP("Convergent branch selection")
@@ -213,4 +235,11 @@ while True:
 STEP("Writing result to file: ")
 MESSAGE("-- Output file is " + data(out_file))
 
+<<<<<<< HEAD
+=======
+MESSAGE("Output file is " + data(out_file))
+
+if add_transition:
+    features.append("Transition")
+>>>>>>> f1040fc14da3bb091d2582f5383a4670344f5e33
 t.write(format=1, features=features, outfile = out_file)

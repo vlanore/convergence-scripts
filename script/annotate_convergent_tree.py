@@ -95,7 +95,7 @@ STEP("Tree retrieval and preparation")
 MESSAGE("Reading tree from file")
 t = Tree(tree_file.name)
 
-print("-- Detect existing tags")
+MESSAGE("Detect existing tags")
 # get all features:
 features = []
 for n in t.traverse("postorder"):
@@ -103,31 +103,29 @@ for n in t.traverse("postorder"):
 features = list(set(features))
 
 if not features:
-    print("  * No detected tag")
-    print("-- Setting all nodes to Condition = "+data(0))
+    SUBMESSAGE("No detected tag")
+    MESSAGE("Setting all nodes to Condition = " + data(0))
+    features = ["Condition"] # so it's written to file
 else:
-    print("  * detected tags: "+",".join(features))
-
-
-if not "Condition" in features:
-    print("-- Setting all nodes to Condition = "+data(0))
-else:
-    print("-- Setting all nodes without tag Condition to "+data(0))
+    SUBMESSAGE("detected tags: " + ",".join([data(f) for f in features]))
+    if not "Condition" in features:
+        MESSAGE("Setting all nodes to Condition = " + data(0))
+        features.append("Condition")
+    else:
+        MESSAGE("Setting all nodes without tag Condition to " + data(0))
 
 def set_if_no_tag(node, tag, value):
     if not hasattr(node, tag):
         node.add_feature(tag, value)
 
 for n in t.traverse("postorder"):
-    set_if_no_tag(n,"Condition",0)
+    set_if_no_tag(n, "Condition", 0)
 
-
-print("-- Numberings nodes")
-
-i=0
+MESSAGE("Numberings nodes")
+i = 0
 for n in t.traverse("postorder"):
     n.add_feature("i",str(i))
-    i+=1
+    i += 1
 
 #===================================================================================================
 STEP("Convergent branch selection")
@@ -208,7 +206,7 @@ while True:
 #===================================================================================================
 STEP("Writing result to file: ")
 
-print("-- Output file is " + data(out_file))
+MESSAGE("Output file is " + data(out_file))
 
 if add_transition:
     features.append("Transition")

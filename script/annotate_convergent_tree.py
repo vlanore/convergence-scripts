@@ -53,14 +53,10 @@ print(step("Setting tree and node styles"))
 
 condi_color_dic = {"0":"#E6E6FA", "1":"#ADD8E6", "2":"#90EE90"}
 
-print("-- Setting node styles")
+print("-- Setting node style")
 nstyle = NodeStyle()
 nstyle["fgcolor"] = "black"
 nstyle["size"] = 1
-
-nstyle_L = NodeStyle() # VL: isn't it identical to nstyle?
-nstyle_L["fgcolor"] = "black"
-nstyle_L["size"] = 1
 
 print("-- Setting tree style")
 tree_style = TreeStyle()
@@ -116,7 +112,7 @@ def draw_tree(tree):
 
     for n in tree_copy.traverse():
         if n.is_leaf():
-                n.set_style(nstyle_L)
+                n.set_style(nstyle)
                 n.add_face(TextFace(str(n.name)), column=0, position="aligned")
         else:
             n.set_style(nstyle)
@@ -142,13 +138,13 @@ def set_tag(node, tag, value):
         node.add_feature(tag, value)
 
 def mark_subtree(node, condition):
-    print("  * adding tag " + data("Condition="+str(condition)) + " to the subtree rooted at node " + data(node.i))
+    print("  * adding tag Condition = " + data(condition) + " to the subtree rooted at node " + data(node.i))
     node.Condition = condition
     for child in node.get_descendants():
         child.Condition = condition
 
     if add_transition:
-        print("  * adding tag " + data("Transition="+str(condition)) + " at node " + data(node.i))
+        print("  * adding tag " + data(condition) + " at node " + data(node.i))
         set_tag(node, "Transition", condition)
 
 draw_tree(t)

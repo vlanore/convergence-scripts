@@ -46,13 +46,12 @@ sister = args.sister
 print("-- Sister branch condition: "+param(sister))
 pdf_window = args.pdf_window
 if not pdf_window:
-    print("-- use a pop-up widow instead of a pdf file")
+    print("-- Use a pop-up widow instead of a pdf file")
 else:
     pdf_file = tree_file.name+".pdf"
-    print("-- use a pdf file instead of a pop-up widow  ("+param(pdf_file)+")")
+    print("-- Use a pdf file instead of a pop-up widow  ("+param(pdf_file)+")")
 out_file = tree_file.name+".annotated"
 print("-- Output file is "+param(out_file))
-
 
 #===================================================================================================
 print(step("Tree retrieval and preparation"))
@@ -72,7 +71,6 @@ print(step("Convergent branch selection"))
 
 condi_color_dic = {"0":"#E6E6FA", "1":"#ADD8E6", "2":"#90EE90"}
 
-
 nstyle = NodeStyle()
 nstyle["fgcolor"] = "black"
 nstyle["size"] = 1
@@ -80,7 +78,6 @@ nstyle["size"] = 1
 nstyle_L = NodeStyle()
 nstyle_L["fgcolor"] = "black"
 nstyle_L["size"] = 1
-
 
 tree_style = TreeStyle()
 tree_style.show_leaf_name = False

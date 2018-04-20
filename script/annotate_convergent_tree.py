@@ -32,11 +32,10 @@ from diffsel_script_utils import *
 print(step("Parsing command line arguments"))
 
 from argparse import ArgumentParser, FileType
-parser = ArgumentParser(description='Annotates a phylogenetic trees with condition numbers compatible with diffsel.')
+parser = ArgumentParser(description='Annotates a phylogenetic trees with condition numbers. Output file uses the NHX format with the "Condition" tag.')
 parser.add_argument('inputFile', metavar="input", type=FileType('r'), nargs=1, help='the tree file (newick format)')
 parser.add_argument('-s', '--sister-branch-cond', dest="sister", action='store_true', help="toggle the use of a different condition for the sister branches of convergent branches")
-parser.add_argument('--pdf', dest="pdf_window", action='store_true', help="use a pdf file instead of a interactive window.")
-parser.add_argument('--transition', dest="add_transition", action='store_true', help="add the tag Transition where you put a convergent event.")
+parser.add_argument('-t', '--transition', dest="add_transition", action='store_true', help="add the tag Transition where you put a convergent event.")
 
 args = parser.parse_args()
 
@@ -46,12 +45,6 @@ sister = args.sister
 print("-- Sister branch condition: "+param(sister))
 add_transition = args.add_transition
 print("-- Add transtion condition: "+param(add_transition))
-pdf_window = args.pdf_window
-if not pdf_window:
-    print("-- Use a pop-up widow instead of a pdf file")
-else:
-    pdf_file = tree_file.name+".pdf"
-    print("-- Use a pdf file instead of a pop-up widow  ("+data(pdf_file)+")")
 out_file = tree_file.name+".annotated"
 print("-- Output file is "+data(out_file))
 
@@ -161,22 +154,18 @@ def mark_subtree(node, condition):
 draw_tree(t)
 
 print("-- Starting subtree selection")
+pdf_file = tree_file.name+".pdf"
 continue_flag = True
-new_tree = t.copy()
 while continue_flag:
     # asking user input
-    if not pdf_window:
-        print("-- Choose your node and close the window")
-        draw_tree(new_tree).show(tree_style=tree_style)
-    else:
-        print("-- Please look at "+data(pdf_file)+" to see node numbers")
-        draw_tree(new_tree).render(pdf_file, tree_style=tree_style)
+    print("-- Please look at "+data(pdf_file)+" to see node numbers")
+    draw_tree(t).render(pdf_file, tree_style=tree_style)
 
     user_input = input(ask_input("Please enter start of convergent subtree (type "+green("s")+" to save and quit):"))
 
     #processing input
     if user_input.isdigit(): #if input is an int
-        n_i = new_tree.search_nodes(i=user_input) # locating subtree whose root is at nb
+        n_i = t.search_nodes(i=user_input) # locating subtree whose root is at nb
         if n_i: # if found
             n_i = n_i[0] # we expect only one result as indices are supposed to be unique
 
@@ -187,7 +176,7 @@ while continue_flag:
                 for n_s_i in n_s:
                     mark_subtree(n_s_i, 2)
 
-        draw_tree(new_tree)
+        draw_tree(t)
 
     elif user_input == "s":
         continue_flag = False
@@ -201,4 +190,4 @@ print("-- Output file is " + data(out_file))
 features = ["Condition"]
 if add_transition:
     features.append("Transition")
-new_tree.write(format=1, features=features, outfile = out_file)
+t.write(format=1, features=features, outfile = out_file)

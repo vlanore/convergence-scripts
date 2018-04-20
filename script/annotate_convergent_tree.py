@@ -95,10 +95,36 @@ print(step("Tree retrieval and preparation"))
 print("-- Reading tree from file")
 t = Tree(tree_file.name)
 
-print("-- Setting all nodes to Condition = "+data(0))
+print("-- Detect existing tags")
+# get all features:
+features = []
+for n in t.traverse("postorder"):
+    features.extend(list(set(dir(n)) - set(dir(Tree()))))
+features = list(set(features))
+
+if not features:
+    print("  * No detected tag")
+    print("-- Setting all nodes to Condition = "+data(0))
+else:
+    print("  * detected tags: "+",".join(features))
+
+
+if not "Condition" in features:
+    print("-- Setting all nodes to Condition = "+data(0))
+else:
+    print("-- Setting all nodes without tag Condition to "+data(0))
+
+def set_if_no_tag(node, tag, value):
+    if not hasattr(node, tag):
+        node.add_feature(tag, value)
+
+for n in t.traverse("postorder"):
+    set_if_no_tag(n,"Condition",0)
+
+
+print("-- Numberings nodes")
 i=0
 for n in t.traverse("postorder"):
-    n.add_feature("Condition",0)
     n.add_feature("i",str(i))
     i+=1
 
@@ -183,7 +209,6 @@ while continue_flag:
 print(step("Writing result to file: "))
 
 print("-- Output file is " + data(out_file))
-features = ["Condition"]
 if add_transition:
     features.append("Transition")
 t.write(format=1, features=features, outfile = out_file)

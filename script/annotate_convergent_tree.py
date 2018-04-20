@@ -107,6 +107,8 @@ if not features:
 else:
     SUBMESSAGE("Detected tags: "+",".join(features))
 
+if "i" in features:
+    print(warning_str("\"i\" is in the detected tag but it will be remove by the programm"))
 
 if not "Condition" in features:
     MESSAGE("Setting all nodes to Condition = "+data(0))

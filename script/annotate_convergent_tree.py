@@ -121,8 +121,12 @@ for n in t.traverse("postorder"):
 #===================================================================================================
 print(step("Convergent branch selection"))
 
-def draw_tree(t):
-    for n in t.traverse():
+def draw_tree(tree):
+    tree_copy = tree.copy("newick-extended")
+    tree_copy.add_feature("i", tree.i)
+    tree_copy.add_feature("Condition", tree.Condition)
+
+    for n in tree_copy.traverse():
         if n.is_leaf():
                 n.set_style(nstyle_L)
                 n.add_face(TextFace(str(n.name)), column=0, position="aligned")
@@ -136,14 +140,15 @@ def draw_tree(t):
         nd.margin_bottom = 1
         nd.border.width = 1
         if add_transition:
-            if hasattr(n,"Transition"):
+            if hasattr(n, "Transition"):
                 nd.border.color = "red"
                 nd.border.width = 2
         n.add_face(nd, column=0, position="float")
         n.add_face(TextFace("       "), column=0, position="branch-bottom")
+    return tree_copy
 
 def set_tag(node, tag, value):
-    if hasattr(n_i,"Transition"):
+    if hasattr(node, "Transition"):
         setattr(node, tag, value)
     else:
         node.add_feature(tag, value)
@@ -162,36 +167,33 @@ draw_tree(t)
 
 print("-- Starting subtree selection")
 continue_flag = True
-t_new = t.copy()
+new_tree = t.copy()
 while continue_flag:
     # asking user input
     if not pdf_window:
         print("-- Choose your node and close the window")
-        t_new.show(tree_style=tree_style)
+        draw_tree(new_tree).show(tree_style=tree_style)
     else:
         print("-- Please look at "+data(pdf_file)+" to see node numbers")
-        t_new.render(pdf_file, tree_style=tree_style)
+        draw_tree(new_tree).render(pdf_file, tree_style=tree_style)
+
     user_input = input(ask_input("Please enter start of convergent subtree (type "+green("s")+" to save and quit):"))
 
     #processing input
     if user_input.isdigit(): #if input is an int
-        t_new = t_new.copy("newick-extended") # make a copy of the tree (VL: why?)
-        t_new.add_feature("i", t.i)
-        t_new.add_feature("Condition", t.Condition)
-        nb = int(user_input)
-        n_i = t_new.search_nodes(i=str(nb)) # locating subtree whose root is at nb
+        n_i = new_tree.search_nodes(i=user_input) # locating subtree whose root is at nb
         if n_i: # if found
             n_i = n_i[0] # we expect only one result as indices are supposed to be unique
 
             mark_subtree(n_i, 1)
 
-            # if sister is specified, handle sister trees
-            if sister:
+            if sister: # if sister is specified, handle sister trees
                 n_s = n_i.get_sisters()
                 for n_s_i in n_s:
                     mark_subtree(n_s_i, 2)
 
-        draw_tree(t_new)
+        draw_tree(new_tree)
+
     elif user_input == "s":
         continue_flag = False
     else:
@@ -199,8 +201,9 @@ while continue_flag:
 
 #===================================================================================================
 print(step("Writing result to file: "))
+
 print("-- Output file is: " + data(out_file))
 features = ["Condition"]
 if add_transition:
     features.append("Transition")
-t_new.write(format=1,features=features, outfile = out_file)
+new_tree.write(format=1, features=features, outfile = out_file)

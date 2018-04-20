@@ -132,7 +132,7 @@ def draw_tree(tree):
     return tree_copy
 
 def set_tag(node, tag, value):
-    if hasattr(node, "Transition"):
+    if hasattr(node, tag):
         setattr(node, tag, value)
     else:
         node.add_feature(tag, value)

@@ -176,13 +176,14 @@ while continue_flag:
             if sister:
                 n_s = n_i.get_sisters()
                 for n_s_i in n_s:
+                    print("  * adding tag " + data("Condition=2") + " to the subtree rooted at node " + data(n_s_i.i))
                     n_s_i.Condition = 2
                     if add_transition:
                         if hasattr(n_i,"Transition"):
                             n_i.Transition = 2
                         else:
                             n_i.add_feature("Transition",2)
-                        print("  * adding tag " + data("Transition=2")+" at node " + data(nb))
+                        print("  * adding tag " + data("Transition=2") + " at node " + data(n_s_i.i))
                     if add_transition:
                         n_s_i.Transition = 2
                     for n in n_s_i.get_descendants():
@@ -197,7 +198,7 @@ while continue_flag:
 
 #===================================================================================================
 print(step("Writing result to file: "))
-print("-- in: " + data(out_file))
+print("-- Output file is: " + data(out_file))
 features = ["Condition"]
 if add_transition:
     features.append("Transition")

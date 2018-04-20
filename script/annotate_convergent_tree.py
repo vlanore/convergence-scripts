@@ -95,7 +95,7 @@ STEP("Tree retrieval and preparation")
 MESSAGE("Reading tree from file")
 t = Tree(tree_file.name)
 
-print("-- Detect existing tags")
+MESSAGE("Detect existing tags")
 # get all features:
 features = []
 for n in t.traverse("postorder"):
@@ -103,16 +103,25 @@ for n in t.traverse("postorder"):
 features = list(set(features))
 
 if not features:
-    print("  * No detected tag")
-    print("-- Setting all nodes to Condition = "+data(0))
+    SUBMESSAGE("No detected tag")
 else:
-    print("  * detected tags: "+",".join(features))
+    SUBMESSAGE("Detected tags: "+",".join(features))
 
 
 if not "Condition" in features:
-    print("-- Setting all nodes to Condition = "+data(0))
+    MESSAGE("Setting all nodes to Condition = "+data(0))
+    features.append("Condition")
 else:
-    print("-- Setting all nodes without tag Condition to "+data(0))
+    MESSAGE("Setting all nodes without tag Condition to "+data(0))
+
+if add_transition and not "Transition" in features:
+    features.append("Transition")
+
+def set_tag(node, tag, value):
+    if hasattr(node, tag):
+        setattr(node, tag, value)
+    else:
+        node.add_feature(tag, value)
 
 def set_if_no_tag(node, tag, value):
     if not hasattr(node, tag):
@@ -121,12 +130,11 @@ def set_if_no_tag(node, tag, value):
 for n in t.traverse("postorder"):
     set_if_no_tag(n,"Condition",0)
 
-
-print("-- Numberings nodes")
+MESSAGE("Numberings nodes")
 
 i=0
 for n in t.traverse("postorder"):
-    n.add_feature("i",str(i))
+    set_tag(n,"i",str(i))
     i+=1
 
 #===================================================================================================
@@ -157,12 +165,6 @@ def draw_tree(tree):
         n.add_face(nd, column=0, position="float")
         n.add_face(TextFace("       "), column=0, position="branch-bottom")
     return tree_copy
-
-def set_tag(node, tag, value):
-    if hasattr(node, tag):
-        setattr(node, tag, value)
-    else:
-        node.add_feature(tag, value)
 
 def mark_subtree(node, condition):
     SUBMESSAGE("adding tag Condition = " + data(condition) + " to the subtree rooted at node " + data(node.i))
@@ -207,9 +209,6 @@ while True:
 
 #===================================================================================================
 STEP("Writing result to file: ")
+MESSAGE("-- Output file is " + data(out_file))
 
-print("-- Output file is " + data(out_file))
-
-if add_transition:
-    features.append("Transition")
 t.write(format=1, features=features, outfile = out_file)

@@ -1,3 +1,7 @@
+# script output files
+*.pdf
+*.annotated
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

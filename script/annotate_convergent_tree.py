@@ -92,34 +92,6 @@ if add_transition:
 #===================================================================================================
 STEP("Tree retrieval and preparation")
 
-MESSAGE("Reading tree from file")
-t = Tree(tree_file.name)
-
-MESSAGE("Detect existing tags")
-# get all features:
-features = []
-for n in t.traverse("postorder"):
-    features.extend(list(set(dir(n)) - set(dir(Tree()))))
-features = list(set(features))
-
-if not features:
-    SUBMESSAGE("No detected tag")
-else:
-    SUBMESSAGE("Detected tags: "+", ".join([data(f) for f in features]))
-
-if "i" in features:
-    WARNING("\"i\" is in the detected tags but it will be removed by the programm")
-    features.remove("i")
-
-if not "Condition" in features:
-    MESSAGE("Setting all nodes to Condition = "+data(0))
-    features.append("Condition")
-else:
-    MESSAGE("Setting all nodes without tag Condition to "+data(0))
-
-if add_transition and not "Transition" in features:
-    features.append("Transition")
-
 def set_tag(node, tag, value):
     if hasattr(node, tag):
         setattr(node, tag, value)
@@ -130,8 +102,31 @@ def set_if_no_tag(node, tag, value):
     if not hasattr(node, tag):
         node.add_feature(tag, value)
 
+MESSAGE("Reading tree from file")
+t = Tree(tree_file.name)
+
+MESSAGE("Detect existing tags")
+features = []
+for n in t.traverse("postorder"): # get all features:
+    features.extend(list(set(dir(n)) - set(dir(Tree()))))
+features = list(set(features)) # list(set(*)) = remove duplicates
+
+SUBMESSAGE("No detected tag" if not features else "Detected tags: "+", ".join([data(f) for f in features]))
+
+if "i" in features:
+    WARNING("\"i\" is in the detected tags but it will be removed by the programm")
+    features.remove("i")
+
+if not "Condition" in features:
+    MESSAGE("Setting all nodes to Condition = "+data(0))
+    features.append("Condition")
+else:
+    MESSAGE("Setting all nodes without tag Condition to "+data(0))
 for n in t.traverse("postorder"):
     set_if_no_tag(n, "Condition", 0)
+
+if add_transition and not "Transition" in features:
+    features.append("Transition")
 
 MESSAGE("Numberings nodes")
 i = 0
@@ -212,5 +207,4 @@ while True:
 #===================================================================================================
 STEP("Writing result to file: ")
 MESSAGE("-- Output file is " + data(out_file))
-
 t.write(format=1, features=features, outfile = out_file)

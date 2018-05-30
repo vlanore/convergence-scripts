@@ -88,11 +88,17 @@ def good(string):
 def bad(string):
     return "-- ("+bcolors.FAIL+"Bad"+bcolors.ENDC+") "+string
 
-def success(string):
+def success_str(string):
     return "-- ["+boldgreen("SUCCESS")+"] "+string
 
-def failure(string):
+def success():
+    return "["+boldgreen("SUCCESS")+"] "
+
+def failure_str(string):
     return "-- ["+boldred("FAILURE")+"] "+string
+
+def failure():
+    return "["+boldred("FAILURE")+"] "
 
 def warning_str(string):
     return "-- ["+boldred("WARNING")+"] "+string

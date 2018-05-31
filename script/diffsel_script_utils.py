@@ -102,6 +102,8 @@ def failure():
 
 def warning_str(string):
     return "-- ["+boldred("WARNING")+"] "+string
+def warning():
+    return "["+boldred("WARNING")+"] "
 
 def ask_input(string):
     return "-- ["+boldcyan("INPUT")+"] "+str(string)

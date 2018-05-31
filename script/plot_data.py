@@ -237,7 +237,7 @@ class SequenceScoreFace(StaticItemFace):
         self.type = "item"
         self.item = None
         self.dict_values_pcoc = dict_values_pcoc
-        self.nb_values = len(dict_values_pcoc.values()[1])
+        self.nb_values = len(list(dict_values_pcoc.values())[1])
         self.col_w = float(col_width)
         self.col_h = float(col_height)
         self.fsize = fsize
@@ -363,7 +363,7 @@ class SequenceScoreFace(StaticItemFace):
         yi = -1
         for model in self.model_names:
             s = float(self.methode_scales[model])
-            if self.dict_values_pcoc.has_key(model):
+            if model in self.dict_values_pcoc:
                 yi += 1
                 y = yi * self.col_w
 

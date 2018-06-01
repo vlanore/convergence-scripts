@@ -206,5 +206,5 @@ while True:
 
 #===================================================================================================
 STEP("Writing result to file: ")
-MESSAGE("-- Output file is " + data(out_file))
+MESSAGE("Output file is " + data(out_file))
 t.write(format=1, features=features, outfile = out_file)

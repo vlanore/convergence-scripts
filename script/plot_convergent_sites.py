@@ -40,7 +40,7 @@ STEP("Parsing command line arguments")
 from argparse import ArgumentParser, FileType
 parser = ArgumentParser(description='''Tool to plot convergent sites from a result table, a tree and a MSA.
 ex:\n\n
-python script/plot_convergent_sites.py  -tsv example/tree4plot.tsv -msa example/tree4plot.fa -tree example/tree4plot.nw.annotated -out example/tree4plot.svg -meth Meth3,Meth1 -t Meth3:0.8,Meth1:70
+python script/plot_convergent_sites.py  -tsv example/tree4plot.tsv -msa example/tree4plot.fa -tree example/tree4plot_annotated.nw -out example/tree4plot.svg -meth Meth3,Meth1 -t Meth3:0.8,Meth1:70
 ''')
 parser.add_argument('-tsv', metavar="table.tsv", type=FileType('r'),
     help='the result table (tabular file, with a column named "Sites" and the others named by the name of the convergent detection tool)', required=True)
@@ -49,13 +49,13 @@ parser.add_argument('-msa', metavar="msa.fa", type=FileType('r'),
 parser.add_argument('-tree', metavar="tree.nhx", type=FileType('r'),
     help='the tree file (NHX format with the "Condition" tag)', required=True)
 parser.add_argument('-out', metavar="output.svg", type=str,
-    help='the output file (format svg)', required=True)
+                    help='the output file (svg format)', required=True)
 
-parser.add_argument('-meth', dest="methods_to_be_plot", type=str,
+parser.add_argument('-meth', dest="methods_to_be_plotted", type=str,
     metavar="\"meth1,meth3\"", help="columns of the table file to use (default:all)",
     default=None)
 parser.add_argument('-t', dest="threshold_by_method", type=str,
-    metavar="\"meth1:0.85,meth3:70\"", help="Threshold to filter site by method in the table file (default:0.99 or 99)",
+    metavar="\"meth1:0.85,meth3:70\"", help="threshold to filter site by method in the table file (default:0.99 or 99)",
     default=None)
 
 args = parser.parse_args()
@@ -69,10 +69,10 @@ MESSAGE("Tree file is    "+param(tree_file.name))
 out_file = args.out
 MESSAGE("Output file is  "+param(out_file))
 
-methods_to_be_plot = args.methods_to_be_plot
-if methods_to_be_plot:
-    methods_to_be_plot = methods_to_be_plot.split(",")
-    MESSAGE("methods_to_be_plot: "+param(methods_to_be_plot))
+methods_to_be_plotted = args.methods_to_be_plotted
+if methods_to_be_plotted:
+    methods_to_be_plotted = methods_to_be_plotted.split(",")
+    MESSAGE("methods_to_be_plotted: "+param(methods_to_be_plotted))
 threshold_by_method = args.threshold_by_method
 dic_threshold_by_method = {}
 if threshold_by_method:
@@ -81,37 +81,35 @@ if threshold_by_method:
 
 
 #===================================================================================================
-STEP("Read input files:")
-MESSAGE("read the table")
+STEP("Reading input files:")
 
-df = pd.read_table(tsv_file)
-colnames = list(df)
+MESSAGE("Reading the result table (%s)"%param(tsv_file.name))
+result_table = pd.read_table(tsv_file)
 
+colnames = list(result_table)
 if "Sites" in colnames:
     SUBMESSAGE(success() + "\"Sites\" column is present")
     colnames.remove("Sites")
 else:
     SUBMESSAGE(failure() + "\"Sites\" column is not present in the input table")
     sys.exit(1)
+SUBMESSAGE("Detected methods: " + ", ".join([data(m) for m in colnames]))
 
-SUBMESSAGE("Detected methods: " + ", ".join([param(m) for m in colnames]))
-
-if methods_to_be_plot:
-    methods_to_be_plot = list(set(colnames) & set(methods_to_be_plot))
-    SUBMESSAGE("Methods which will be used after filtering: " + ", ".join([param(m) for m in methods_to_be_plot]))
+if methods_to_be_plotted:
+    methods_to_be_plotted = list(set(colnames) & set(methods_to_be_plotted))
+    SUBMESSAGE("Methods which will be used after filtering: " + ", ".join([param(m) for m in methods_to_be_plotted]))
 else:
-    methods_to_be_plot = colnames
+    methods_to_be_plotted = colnames
     SUBMESSAGE("All methods will be used")
 
-if not methods_to_be_plot:
+if not methods_to_be_plotted:
     SUBMESSAGE(failure() + "No method to be plot. Check your table file and your option.")
     sys.exit(1)
 
-
-SUBMESSAGE("Threshold to filter sites:")
+MESSAGE("Computing thresholds to filter sites:")
 methode_scales = {}
-for meth in methods_to_be_plot:
-    max_meth = max(df[meth])
+for meth in methods_to_be_plotted:
+    max_meth = max(result_table[meth])
     if max_meth > 1:
         methode_scales[meth] = 100
     else:
@@ -124,11 +122,10 @@ for meth in methods_to_be_plot:
     else:
         threshold = 0.99
         dic_threshold_by_method[meth] = threshold
-    nb_sites = sum(df[meth]>threshold)
-    print("    - %s: > %s (%s sites)" %(param(meth), data(threshold), nb_sites))
+    nb_sites = sum(result_table[meth] > threshold)
+    SUBMESSAGE("%s: > %s (%s sites)" %(param(meth), data(threshold), data(nb_sites)))
 
-MESSAGE("read the msa")
-
+MESSAGE("Reading the msa")
 try:
     alignment = AlignIO.read(msa_file, "fasta")
 except Exception as exc:
@@ -137,12 +134,11 @@ except Exception as exc:
 
 nb_seq=len(alignment)
 nb_sites=len(alignment[0].seq)
-SUBMESSAGE(success() + "There are %i sequences of %i sites" %(nb_seq, nb_sites))
+SUBMESSAGE(success() + "There are %s sequences of %s sites" %(data(nb_seq), data(nb_sites)))
 
 seq_names = [ s.name for s in alignment]
 
-MESSAGE("read the tree")
-
+MESSAGE("Reading the tree")
 try:
     t=Tree(tree_file.name)
 except Exception as exc:
@@ -152,10 +148,9 @@ except Exception as exc:
 leaves_names = [ l.name for l in t.get_leaves()]
 nb_leaves = len(leaves_names)
 
-SUBMESSAGE(success() + "There are %i leaves" %(nb_leaves))
+SUBMESSAGE(success() + "There are %s leaves" %(data(nb_leaves)))
 
 MESSAGE("Check link between sequence names and leaf names")
-
 seq_names_not_in_leaves = list(set(seq_names) - set(leaves_names))
 leaf_names_not_in_seq = list(set(leaves_names) - set(seq_names))
 if seq_names_not_in_leaves:
@@ -170,7 +165,7 @@ if set(leaves_names) != set(seq_names) or len(leaves_names) != len(seq_names):
         SUBMESSAGE(failure() + "Sequence names and leaf names are not identical.")
     sys.exit(1)
 else:
-    SUBMESSAGE(success())
+    SUBMESSAGE(success() + "Sequence names and leaves match!")
 
 
 MESSAGE("Detect existing tags in the tree")
@@ -187,8 +182,6 @@ else:
 if "Transition" in features:
     SUBMESSAGE(success() + "Tag \"Transition\" detected")
 
-
-
 #===================================================================================================
 STEP("Prepare plot")
 
@@ -202,20 +195,20 @@ def filter_l(l, pos):
         new_l[i] = l[p-1]
     return new_l
 
-SUBMESSAGE("Filter alignment")
+MESSAGE("Filter alignment")
 # filter position:
 bilan_f = {}
 all_pos = range(1, nb_sites +1)
 dict_pos_filtered = {}
-for meth in methods_to_be_plot:
-    dict_pos_filtered[meth] = df["Sites"][df[meth]>dic_threshold_by_method[meth]].tolist()
+for meth in methods_to_be_plotted:
+    dict_pos_filtered[meth] = result_table["Sites"][result_table[meth]>dic_threshold_by_method[meth]].tolist()
 
 all_filtered_position = list(set(unlist(dict_pos_filtered.values())))
 all_filtered_position.sort()
 dict_pos_filtered["union"] = all_filtered_position
 
 # filtered ali:
-for meth in methods_to_be_plot + ["union"]:
+for meth in methods_to_be_plotted + ["union"]:
     filtered_ali = []
     for seq in alignment:
         new_seq = SeqRecord.SeqRecord(Seq.Seq("".join(filter_l(list(seq.seq),dict_pos_filtered[meth]))), seq.id, "", "")
@@ -226,24 +219,22 @@ for meth in methods_to_be_plot + ["union"]:
     else:
         methstr = meth
 
-SUBMESSAGE("Conserved sited: %s" %(",".join(map(str,dict_pos_filtered ["union"]))))
+MESSAGE("Conserved sited: %s" %(", ".join(map(data,dict_pos_filtered ["union"]))))
+
 #===================================================================================================
 STEP("Draw plot")
+MESSAGE("Writing plot to " + data(out_file))
 
 positions_to_highlight = None
 
 # all model
 if dict_pos_filtered["union"]:
     dict_values_pcoc_filtered_model = {}
-    for meth in methods_to_be_plot:
-        dict_values_pcoc_filtered_model[meth] = df[meth][df["Sites"].isin(dict_pos_filtered["union"])].tolist()
+    for meth in methods_to_be_plotted:
+        dict_values_pcoc_filtered_model[meth] = result_table[meth][result_table["Sites"].isin(dict_pos_filtered["union"])].tolist()
     meth = "union"
     make_tree_ali_detect_combi(tree_file.name, "filtered_ali."+meth+".faa", out_file,
                                dict_benchmark = dict_values_pcoc_filtered_model,
                                x_values= dict_pos_filtered[meth], hp=positions_to_highlight,
                                methode_scales = methode_scales, methode_thresholds=dic_threshold_by_method)
 
-
-#===================================================================================================
-STEP("Writing result to file: ")
-MESSAGE("-- Output file is " + data(out_file))

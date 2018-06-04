@@ -24,7 +24,6 @@
 # The fact that you are presently reading this means that you have had knowledge of the CeCILL-C license and that you accept
 # its terms.
 
-
 from ete3 import Tree, NodeStyle, TreeStyle, TextFace
 from diffsel_script_utils import *
 from plot_data import *
@@ -72,12 +71,12 @@ MESSAGE("Output file is  "+param(out_file))
 methods_to_be_plotted = args.methods_to_be_plotted
 if methods_to_be_plotted:
     methods_to_be_plotted = methods_to_be_plotted.split(",")
-    MESSAGE("methods_to_be_plotted: "+param(methods_to_be_plotted))
+    MESSAGE("Methods to be plotted: "+", ".join([param(meth) for meth in methods_to_be_plotted]))
 threshold_by_method = args.threshold_by_method
 dic_threshold_by_method = {}
 if threshold_by_method:
     dic_threshold_by_method = {mt.split(":")[0]:float(mt.split(":")[1]) for mt in threshold_by_method.split(",") }
-    MESSAGE("threshold_by_method: "+param(dic_threshold_by_method))
+    MESSAGE("Threshold by method: "+", ".join([(param(key)+": "+param(value)) for key,value in dic_threshold_by_method.items()]))
 
 
 #===================================================================================================
@@ -196,7 +195,6 @@ def filter_l(l, pos):
     return new_l
 
 MESSAGE("Filter alignment")
-# filter position:
 bilan_f = {}
 all_pos = range(1, nb_sites +1)
 dict_pos_filtered = {}
@@ -219,7 +217,7 @@ for meth in methods_to_be_plotted + ["union"]:
     else:
         methstr = meth
 
-MESSAGE("Conserved sited: %s" %(", ".join(map(data,dict_pos_filtered ["union"]))))
+SUBMESSAGE("Conserved sites: %s" %(", ".join(map(data, dict_pos_filtered ["union"]))))
 
 #===================================================================================================
 STEP("Draw plot")

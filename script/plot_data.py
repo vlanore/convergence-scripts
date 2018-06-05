@@ -521,6 +521,8 @@ def make_tree_ali_detect_combi(g_tree, ali_nf, Out,
     tree_face.update_items()
     tree_h = tree_face._height()
     tree_w = tree_face._width()
+    t = PhyloTree(tree_nf)
+    t.link_to_alignment (ali_nf)
 
     ### X axes:
     if not x_values: # Complete representation

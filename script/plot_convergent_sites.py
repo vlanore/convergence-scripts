@@ -206,12 +206,13 @@ all_filtered_position.sort()
 dict_pos_filtered["union"] = all_filtered_position
 
 # filtered ali:
-for meth in methods_to_be_plotted + ["union"]:
+filtered_ali_filename = out_file + ".filtered_ali.faa"
+for meth in ["union"]: #methods_to_be_plotted + ["union"]:
     filtered_ali = []
     for seq in alignment:
         new_seq = SeqRecord.SeqRecord(Seq.Seq("".join(filter_l(list(seq.seq),dict_pos_filtered[meth]))), seq.id, "", "")
         filtered_ali.append(new_seq)
-    SeqIO.write(filtered_ali, "filtered_ali."+meth+".faa", "fasta")
+    SeqIO.write(filtered_ali, filtered_ali_filename, "fasta")
     if meth == "union":
         methstr = "union"
     else:
@@ -231,7 +232,7 @@ if dict_pos_filtered["union"]:
     for meth in methods_to_be_plotted:
         dict_values_pcoc_filtered_model[meth] = result_table[meth][result_table["Sites"].isin(dict_pos_filtered["union"])].tolist()
     meth = "union"
-    make_tree_ali_detect_combi(tree_file.name, "filtered_ali."+meth+".faa", out_file,
+    make_tree_ali_detect_combi(tree_file.name, filtered_ali_filename, out_file,
                                dict_benchmark = dict_values_pcoc_filtered_model,
                                x_values= dict_pos_filtered[meth], hp=positions_to_highlight,
                                methode_scales = methode_scales, methode_thresholds=dic_threshold_by_method)

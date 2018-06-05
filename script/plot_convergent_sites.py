@@ -57,6 +57,11 @@ parser.add_argument('-t', dest="threshold_by_method", type=str,
     metavar="\"meth1:0.85,meth3:70\"", help="threshold to filter site by method in the table file (default:0.99 or 99)",
     default=None)
 
+
+parser.add_argument('-title', dest="title", type=str,
+    metavar="\"title\"", help="Plot title (default:None)",
+    default=None)
+
 args = parser.parse_args()
 
 tsv_file = args.tsv
@@ -235,5 +240,6 @@ if dict_pos_filtered["union"]:
     make_tree_ali_detect_combi(tree_file.name, filtered_ali_filename, out_file,
                                dict_benchmark = dict_values_pcoc_filtered_model,
                                x_values= dict_pos_filtered[meth], hp=positions_to_highlight,
-                               methode_scales = methode_scales, methode_thresholds=dic_threshold_by_method)
+                               methode_scales = methode_scales, methode_thresholds=dic_threshold_by_method,
+                               title = args.title)
 

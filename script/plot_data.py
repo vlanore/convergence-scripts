@@ -462,7 +462,8 @@ def make_tree_ali_detect_combi(g_tree, ali_nf, Out,
                                methode_scales = {},
                                methode_thresholds = {},
                                reorder = False,
-                               det_tool=False):
+                               det_tool=False,
+                               title = None):
     ### Methods
     method_names = dict_benchmark.keys()
     
@@ -581,6 +582,11 @@ def make_tree_ali_detect_combi(g_tree, ali_nf, Out,
     phylotree_style.legend.add_face(TextFace(" * : selected sites", fsize=8 ), column=0)
 
     phylotree_style.legend_position = 1
+
+    if title:
+        title_face = TextFace(title, fsize=12)
+        phylotree_style.title.add_face(title_face , column=0)
+        phylotree_style.title.add_face(TextFace(" ", fsize=4) , column=0)
 
     res = t.render(Out, tree_style=phylotree_style)
     del t

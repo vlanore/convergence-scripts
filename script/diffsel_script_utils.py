@@ -1,6 +1,7 @@
-# Copyright or Copr. Centre National de la Recherche Scientifique (CNRS) (2018)
+# Copyright or Copr. Centre National de la Recherche Scientifique (CNRS) and École Normale Supérieure de Lyon (2018)
 # Contributors:
 # - Vincent Lanore <vincent.lanore@gmail.com>
+# - Carine Rey <carine.rey@ens-lyon.org>
 
 # This software is a computer program whose purpose is to provide a set of scripts for pre and post processing of data for
 # convergence detection programs.

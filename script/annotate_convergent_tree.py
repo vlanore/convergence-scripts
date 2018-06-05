@@ -1,4 +1,4 @@
-# Copyright or Copr. Centre National de la Recherche Scientifique (CNRS) (2018)
+# Copyright or Copr. Centre National de la Recherche Scientifique (CNRS) and École Normale Supérieure de Lyon (2018)
 # Contributors:
 # - Vincent Lanore <vincent.lanore@gmail.com>
 # - Carine Rey <carine.rey@ens-lyon.org>
@@ -23,7 +23,6 @@
 
 # The fact that you are presently reading this means that you have had knowledge of the CeCILL-C license and that you accept
 # its terms.
-
 
 from ete3 import Tree, NodeStyle, TreeStyle, TextFace
 from diffsel_script_utils import *

@@ -1,4 +1,4 @@
-# Copyright or Copr. Centre National de la Recherche Scientifique (CNRS) (2018)
+# Copyright or Copr. Centre National de la Recherche Scientifique (CNRS) and École Normale Supérieure de Lyon (2018)
 # Contributors:
 # - Vincent Lanore <vincent.lanore@gmail.com>
 # - Carine Rey <carine.rey@ens-lyon.org>
